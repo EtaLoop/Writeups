@@ -1,0 +1,56 @@
+Box PUPPY:
+
+NMAP:
+Port nfs:
+pas commun, moyen de partager des fichiers à distance (run le docker avec --privileged)
+-> showmount -e <ip>
+
+Port SMB: 
+nxc smb <ip> -u <username> ... (--shares) -> les creds fonctionnent + shares réversés au dev
+nxc ldap -> possible de bloodhound (pour AD windows)
+
+neo4j pour schema:
+neo4j start
+
+-> Levi James est membre du groupe HR qui a GenericsRights sur groupe developer
+
+-> bloodyAD pour avoir des infos sur user, s'ajouter a des groupe
+Donc on peut lire la shares réservée au dev.
+
+
+smbclient.py = connection en smb
+-> recovery.kdbx (keepass)
+keepass2john (johnthereaper) pour avoir un hash qu'on va attaquer avec john -> mdp: liverPool
+Lecture de la base de donnée online avec KeeWeb
+
+-> test des connection user/password avec nxc ldap -> ant.edouart
+
+Attaque suggerer par neo4j:
+- targetedKerberoast + faketime -> ajouter un ticet pour adam.silver + demander un ticket pour se service
+- pywhisper: ajouter "second mot de passe" sur un user (shadow credential) -> "credential has been revocked"
+
+Donc on utilise bloodyAD pour supprimer avec uac (user account control) le champ ACCOUNTDISABLE = user réactiver
+targetedKerberoast : mdp trop fort
+
+pywhisper (shadow cred): pas de pkinit
+
+=> forcé de changer le mdp 
+-> Connection evil-winrm = USER.TXT
+
+
+-> zip de backup qui reste, avec des credential en clair : steph.cooper
+on test avec nxc ldap
+
+On se balade, on trouve dans /credential (ls -hidden), un dl un fichier, on encode avec certutil
+On cherche la masterkey, on encode avec certutil
+
+-> donne des fichier dpApi que l'on decode (base64)
+dpapi.py masterkey -f <decoded_file> -s <sid_user_silber>
+-> Déchiffre la clef maitre
+
+dpapi.py credential -f ..
+-> Déchiffre les crédential
+
+On obtient user/password
+
+-> conncetion avec psexec/winrm

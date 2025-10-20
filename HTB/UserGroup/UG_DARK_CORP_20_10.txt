@@ -1,0 +1,90 @@
+Nmap -> ssh/http
+
+WEB:
+Firefox -> redirection vers drip.htb = V host = écrire dans /etc/hosts
+Quand sign-in = error, nous emene vers mail.drip.htb (écrire dans /etc/hosts aussi)
+Page About: RoundCube 1.6.7 = CVE poc github = XSS + CSRF = body html 
+
+Formulaire de contact: requete POST quand envoyée, il y a le recipient, on peut changer le destinataire, on se l'envois.
+Il y a une autre email: bcase@drip.htb du Security Engeneer.
+
+Dans la requête, on essaie de changer le type de content (de text à html).
+avec curl, on met le payload de la CVE.
+
+Nouveau payload -> le script .js sur ma machine.
+Le script: lance un autre script qui fetch les emails d'un mail (bcase) + les envoyer vers mon server en base64.
+-> on obtient tous les mails en base64
+
+On fait un server qui decode le mail + affiche le contenu.
+Dans un mail, on decouvre un url pour analytic panel
+Login page + reset password (bcase@drip.htb)
+
+Sur le dashboard, dans la search bar -> erreur sql -> faille = SELECT User, Password FROM Users.
+User: support, bcase, ebelford
+
+SHELL
+On cherche payload Postegre sur 'Payload all the thing', reverse shell linux + stabilisé avec :
+script -qc /bin/bash /dev/nul
+export TERM=xterm
+ctrl+z
+stty raw -echo;fg %2
+
+On trouve:
+- .env dans /var/wwww = creds pour se connection à la DB 
+- backups dostegre, décrypte avec dpg = demande password (bcase, victor, ebelford)
+
+On trouve, password encodés.
+Ebelford peut se connecter en ssh (pas de perms)
+
+ipa -> on a 2 ip -> 2 machines interconnectée
+
+TUNNEL:
+Outil: ligolo-ng qui marche avec un agent (à installer) (ou chisel)
+-> interface_create --name ligolo 
+-> route_add -name ligolo -route ip
+Permets d'execuer des commandes sur notre machines aux ip atteignable (par le tunnel)
+
+On trouve 3 machines en ip.1, ip.2, ip.3, nmap sur ces machines = plusieurs ports
+nxc smb = donne l'info sur 2 machines: DC01 + WEB01
+
+Victor est un user de DC01 -> bloodhound + neo4j -> victor n'a pas de perms
+
+Sur WEB01 -> login avec victor -> dashboard
+Sur la partie Check Status = test connection
+On active port 8080 sur drip.htb -> on a un connection 
+
+-> Avec socat pour forward les informations de connection 
+-> responder pour avoir le ticket NTMLv2 du compte SVC_ACC
+-> john avec format netntlmv2 par decryptable
+
+SVC_ACC faire partie des admin, peut créer des domaine
+
+Avec ntlmrelayx pour releyer web01 -> dc01
+Avec un relay -> printerbug.py/PetitPotam.py ou krbrelayx (pour les tickets) pour se connecter à DC01
+
+SHELL WEB01:
+On obtient un unknown.pfx -> certipy on obtient web01 + ccache
+web01 est propiétaire de la machine, donc on peut créer un ticket pour n'importe quel utilisateur sur la machine (Administrator)
+-> connection avec secretdump -> user.text
+
+-> schtask (un peu comme crontab, script qui tournent) -> cleanupscript qui lance un fichier powershell .ps1 = qui lance un service
+-> on modifie le fichier .ps1 pour obtenir les creds actuels (pas les vrais creds de l'admin)
+ 
+
+-> on chope les creds de l'admin avec -dp-api avec nxc qui appartient à john (qui control angela)
+
+
+-> shadow credential attack de john sur angela
+-> angela a un compte ADMIN qui appart au groupe LINUX ADMIN
+
+-> avec BloodyAD on change son user principal name -> angela.ADM
+-> on demande un ticket avec getTGT.py avec -principalType NT_ENTERPRISE + connection sur linux avec `ksu`
+-> sudo -l = toutes les perms = sudo su
+
+Dans /var/lib/sss/db (le système qui fait kerberos sur linux)
+-> db avec des creds, on obtient taylor.b et son comtpe adm
+
+DC01:
+- taylor.d membre de GPO_MANAGER (GPO= règle qiu s'applique sur toute les machines)
+- Avec pygpoabuse -> ajouter une règle qui ajoute taylor.b.adm au groupe, on attend
+- Connection = root.txt
