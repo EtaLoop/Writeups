@@ -24,7 +24,7 @@ User: support, bcase, ebelford
 
 SHELL
 On cherche payload Postegre sur 'Payload all the thing', reverse shell linux + stabilisé avec :
-script -qc /bin/bash /dev/nul
+script -qc /bin/bash /dev/null
 export TERM=xterm
 ctrl+z
 stty raw -echo;fg %2
