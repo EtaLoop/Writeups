@@ -2,6 +2,6 @@
 
 | Name | Difficulty | Platform | HTB / TryHackMe |
 |----------------|------------|----------|-----------------| 
-| [Giveback](Giveback/giveback.md)       | Medium     | Linux    | HTB             |
-| [Signed](Signed/signed.md)         | Medium       | Windows  | HTB             |
+| [Giveback](Giveback/Machines/giveback.md)       | Medium     | Linux    | HTB             |
+| [Signed](Signed/Machines/signed.md)         | Medium       | Windows  | HTB             |
 
