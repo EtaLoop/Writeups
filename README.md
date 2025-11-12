@@ -2,6 +2,11 @@
 
 | Name | Difficulty | Platform | HTB / TryHackMe |
 |----------------|------------|----------|-----------------| 
-| [Giveback](Giveback/Machines/giveback.md)       | Medium     | Linux    | HTB             |
-| [Signed](Signed/Machines/signed.md)         | Medium       | Windows  | HTB             |
+| [Editor](Machines/Editor/editor.md)           | Easy      | Linux    | HTB             |
+| [Giveback](Machines/Giveback/giveback.md)     | Medium    | Linux    | HTB             |
+| [Signed](Machines/Signed/signed.md)           | Medium    | Windows  | HTB             |
 
+## Challenges
+| Name | Difficulty | Category |
+|----------------|------------|----------|
+| [SpookyPass](Challenges/SpookyPass/spookypass.md)       | Easy     | Reversing    |
