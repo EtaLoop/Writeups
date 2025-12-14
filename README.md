@@ -1,4 +1,4 @@
-## Machine - HackTheBox
+## Machines - HackTheBox
 
 | Name                                                   | Difficulty | Platform |
 |--------------------------------------------------------|------------|----------|
