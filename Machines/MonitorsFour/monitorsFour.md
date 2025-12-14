@@ -27,7 +27,6 @@ The `/contact` page displays PHP include():
 
 ![contact](./assets/contact.png)
 
-
 However, this is not useful for exploitation.
 
 
@@ -39,6 +38,9 @@ The `/user` endpoint returns the following error:
 ```
 
 This suggests the endpoint expects a `token` parameter:
+
+## User endpoint exploitation
+
 
 ```
 http://monitorsfour.htb/user?token=something
@@ -74,14 +76,13 @@ Recovered credentials:
 ```
 admin:wonderful1
 ```
-____
+
 ## Admin Panel:
 Using the cracked credentials, we can log in to the admin panel:
 ![admin](./assets/admin_page.png)
 
 However, the page does not provide any useful information.
 
-___
 ## Virtual Host Enumeration
 
 In parallel, we enumerate virtual hosts:
@@ -216,11 +217,11 @@ payload = {
     }
 ```
 
-(See [root_exploit.py](root_exploit.py))
+(See [exploit.py](exploit.py))
 
 Run:
 ```bash
-python3 root_exploit.py -u 192.168.65.7:2375 -c "cat Users/Administrator/Desktop/root.txt"
+python3 exploit.py -u 192.168.65.7:2375 -c "cat Users/Administrator/Desktop/root.txt"
 ```
 (or make a reverse shell).
 
